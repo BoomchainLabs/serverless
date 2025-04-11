@@ -45,3 +45,6 @@ custom:
 
 package:
   individually: true
+
+org: boomchainlab
+app: mintforge
