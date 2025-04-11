@@ -1,0 +1,47 @@
+service: tokenjet
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: us-east-1
+  stage: prod
+  memorySize: 256
+  timeout: 10
+  environment:
+    NODE_ENV: production
+    PRIVATE_KEY: ${env:PRIVATE_KEY}
+    RPC_URL: ${env:RPC_URL}
+    JWT_SECRET: ${env:JWT_SECRET}
+
+functions:
+  distribute:
+    handler: api/distribute.handler
+    events:
+      - httpApi:
+          path: /api/distribute
+          method: post
+
+  status:
+    handler: api/status.handler
+    events:
+      - httpApi:
+          path: /api/status
+          method: get
+
+plugins:
+  - serverless-esbuild
+  - serverless-dotenv-plugin
+
+custom:
+  esbuild:
+    bundle: true
+    minify: true
+    sourcemap: false
+    exclude: ['aws-sdk']
+    target: node18
+    platform: node
+    concurrency: 10
+
+package:
+  individually: true
